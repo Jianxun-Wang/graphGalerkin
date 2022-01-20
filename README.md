@@ -1,5 +1,8 @@
 # graphGalerkin
 Physics-informed graph neural Galerkin networks: A unified framework for solving PDE-governed forward and inverse problems
+# requirement
+Please add pyCaMOtk folder to your python path, so your system can find it,
+such as export PYTHONPATH=$PYTHONPATH:your_path/pycamotk
 ## Citation
 If you find this repo useful for your research, please consider to cite:
 ```latex
