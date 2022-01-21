@@ -1,10 +1,9 @@
 import torch
 import torch.nn.functional as F
+import pdb
 from torch_geometric.nn import GCNConv, ChebConv, GATConv, TransformerConv, TAGConv, ARMAConv, SGConv,MFConv, RGCNConv
 from torch_geometric.data import InMemoryDataset
-
 import numpy as np
-import pdb
 
 def e2vcg2connectivity(e2vcg,type='iso'):
 	"""
@@ -258,6 +257,21 @@ class Ns_Chebnet(torch.nn.Module):
 ##############################################
 ##############################################
 
+def last_chance0(maru):
+	f91=torch.cat([dark.weight.T.unsqueeze(0) for dark in maru.lins],dim=0)
+	f91 = torch.nn.init.orthogonal_(f91, torch.nn.init.calculate_gain('relu'))
+	for i in range(len(maru.lins)):
+		macsed= torch.nn.Parameter(f91[i,:,:].T)
+		maru.lins[i].weight=macsed
+	return maru
+
+def last_chance1(maru):
+	weights=torch.cat([dark.weight.T.unsqueeze(0) for dark in maru.lins],dim=0)
+	weights = torch.nn.init.orthogonal_(weights)
+	for i in range(len(maru.lins)):
+		w_= torch.nn.Parameter(weights[i,:,:].T)
+		maru.lins[i].weight=w_
+	return maru
 
 
 class PossionNet(torch.nn.Module):
@@ -295,14 +309,26 @@ class PossionNet(torch.nn.Module):
 		torch.nn.init.kaiming_normal_(self.conv7.weight, mode='fan_out', nonlinearity='relu')
 		torch.nn.init.kaiming_normal_(self.conv8.weight)
 		'''
-		# torch.nn.init.orthogonal_(self.conv1.weight, torch.nn.init.calculate_gain('relu'))
-		# torch.nn.init.orthogonal_(self.conv2.weight, torch.nn.init.calculate_gain('relu'))
-		# torch.nn.init.orthogonal_(self.conv3.weight, torch.nn.init.calculate_gain('relu'))
-		# torch.nn.init.orthogonal_(self.conv4.weight, torch.nn.init.calculate_gain('relu'))
-		# torch.nn.init.orthogonal_(self.conv5.weight, torch.nn.init.calculate_gain('relu'))
-		# torch.nn.init.orthogonal_(self.conv6.weight, torch.nn.init.calculate_gain('relu'))
-		# torch.nn.init.orthogonal_(self.conv7.weight, torch.nn.init.calculate_gain('relu'))
-		# torch.nn.init.orthogonal_(self.conv8.weight)
+		
+		#pdb.set_trace()
+		try:
+			self.conv1=last_chance0(self.conv1)
+			self.conv2=last_chance0(self.conv2)
+			self.conv3=last_chance0(self.conv3)
+			self.conv4=last_chance0(self.conv4)
+			self.conv5=last_chance0(self.conv5)
+			self.conv6=last_chance0(self.conv6)
+			self.conv7=last_chance0(self.conv7)
+			self.conv8=last_chance1(self.conv8)
+		except:
+			torch.nn.init.orthogonal_(self.conv1.weight, torch.nn.init.calculate_gain('relu'))
+			torch.nn.init.orthogonal_(self.conv2.weight, torch.nn.init.calculate_gain('relu'))
+			torch.nn.init.orthogonal_(self.conv3.weight, torch.nn.init.calculate_gain('relu'))
+			torch.nn.init.orthogonal_(self.conv4.weight, torch.nn.init.calculate_gain('relu'))
+			torch.nn.init.orthogonal_(self.conv5.weight, torch.nn.init.calculate_gain('relu'))
+			torch.nn.init.orthogonal_(self.conv6.weight, torch.nn.init.calculate_gain('relu'))
+			torch.nn.init.orthogonal_(self.conv7.weight, torch.nn.init.calculate_gain('relu'))
+			torch.nn.init.orthogonal_(self.conv8.weight)
 		#torch.nn.init.orthogonal_(self.conv4.weight)
 		#torch.nn.init.orthogonal_(self.conv1.weight, torch.nn.init.calculate_gain('relu'))
 		#torch.nn.init.kaiming_normal_(self.conv3.weight, mode='fan_out', nonlinearity='relu')
