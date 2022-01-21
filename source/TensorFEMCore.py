@@ -191,7 +191,7 @@ def solve_SGD(DataLoader,LossF,model,tol,maxit,qoiidx,softidx,penaltyConstant,pl
 	tol: the trauncation of loss function
 	maxit: the maximum number of epoch
 	"""
-	optimizer=torch.optim.Adam(model.parameters(), lr=0.001) #model.parameters() default 0.001
+	optimizer=torch.optim.Adam(model.parameters(), lr=0.001) 
 	criterion=torch.nn.MSELoss()
 	Er=[];	Loss=[]
 	tol_e=[1,0.1,0.09,0.08,0.07,0.06,0.05,0.04,0.03,0.02,0.01,
